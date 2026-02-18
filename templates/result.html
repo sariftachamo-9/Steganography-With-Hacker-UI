@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>StegoPHY v2.0 - Operation Successful</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+
+<body>
+    <canvas id="matrix"></canvas>
+
+    <div class="container">
+        <header>
+            <h1 class="glitch-text" data-text="OPERATION COMPLETE">OPERATION COMPLETE</h1>
+        </header>
+
+        <div class="card" style="text-align: center;">
+            <div class="success-message">
+                > {{ message }}
+            </div>
+
+            <p style="margin-bottom: 20px;">> FILENAME: {{ filename }}</p>
+
+            <a href="{{ url_for('download_file', filename=filename) }}" class="btn">
+                > DOWNLOAD_RESULT
+            </a>
+
+            <br><br>
+
+            <a href="{{ url_for('index') }}" style="color: #0f0; text-decoration: none; font-size: 0.9em;">
+                > RETURN_TO_MAIN_TERMINAL
+            </a>
+        </div>
+    </div>
+
+    <script>
+        // Matrix Rain (Simplified for result page)
+        const canvas = document.getElementById('matrix');
+        const ctx = canvas.getContext('2d');
+        canvas.width = window.innerWidth;
+        canvas.height = window.innerHeight;
+        const alphabet = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789';
+        const fontSize = 16;
+        const columns = canvas.width / fontSize;
+        const rainDrops = Array(Math.ceil(columns)).fill(1);
+
+        const draw = () => {
+            ctx.fillStyle = 'rgba(0, 0, 0, 0.05)';
+            ctx.fillRect(0, 0, canvas.width, canvas.height);
+            ctx.fillStyle = '#0F0';
+            ctx.font = fontSize + 'px monospace';
+            for (let i = 0; i < rainDrops.length; i++) {
+                const text = alphabet.charAt(Math.floor(Math.random() * alphabet.length));
+                ctx.fillText(text, i * fontSize, rainDrops[i] * fontSize);
+                if (rainDrops[i] * fontSize > canvas.height && Math.random() > 0.975) rainDrops[i] = 0;
+                rainDrops[i]++;
+            }
+        };
+        setInterval(draw, 30);
+    </script>
+</body>
+
+</html>

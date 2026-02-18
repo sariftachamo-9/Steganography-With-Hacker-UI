@@ -1,0 +1,19 @@
+# Python
+__pycache__/
+*.py[cod]
+venv/
+env/
+
+# IDE
+.vscode/
+.idea/
+
+# Project Output / Generated Files
+stego_examples/
+test_payloads/
+*/uploads/
+*/downloads/
+instance/
+*.spec
+dist/
+build/
