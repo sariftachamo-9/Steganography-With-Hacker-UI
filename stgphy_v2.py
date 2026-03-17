@@ -5,6 +5,10 @@ import zlib
 from flask import Flask, render_template, request, send_file, redirect, url_for, flash
 from PIL import Image
 from werkzeug.utils import secure_filename
+try:
+    from js import Response, Headers
+except ImportError:
+    pass # Not running in Cloudflare Worker environment
 
 app = Flask(__name__)
 app.secret_key = 'super_secret_hacker_key'  # Required for flash messages
@@ -231,3 +235,24 @@ if __name__ == '__main__':
     # Use PORT from environment for cloud deployment, default to 5678 for local
     port = int(os.environ.get('PORT', 5678))
     app.run(debug=True, host='0.0.0.0', port=port)
+
+# Cloudflare Workers Handler
+async def on_fetch(request, env):
+    with app.test_client() as client:
+        # Convert Cloudflare request to Flask request
+        method = request.method
+        url = request.url
+        headers = {k: v for k, v in request.headers.items()}
+        
+        # Handle body if present
+        body = await request.arrayBuffer()
+        data = body.to_py().tobytes() if body else None
+        
+        response = client.open(url, method=method, headers=headers, data=data)
+        
+        # Convert Flask response to Cloudflare Response
+        cf_headers = Headers.new()
+        for k, v in response.headers.items():
+            cf_headers.append(k, str(v))
+            
+        return Response.new(response.data, status=response.status_code, headers=cf_headers)

@@ -1,0 +1,7 @@
+name = "stegnography-v2"
+main = "stgphy_v2.py"
+compatibility_date = "2024-03-18"
+
+[python]
+# Cloudflare Workers Python support
+requirements = ["Flask", "Pillow"]
